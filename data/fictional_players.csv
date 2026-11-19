@@ -1,0 +1,21 @@
+player_id,player_name,age,position,preferred_foot,league,minutes,progressive_passes_per90,defensive_duel_win_pct,is_synthetic,source
+SYN001,Fictional Defender 01,19,CB,right,Imaginary League B,755,1.17,51.1,true,synthetic_v1
+SYN002,Fictional Defender 02,20,CB,right,Imaginary League A,860,1.34,52.2,true,synthetic_v1
+SYN003,Fictional Defender 03,21,CB,left,Imaginary League B,965,1.51,53.3,true,synthetic_v1
+SYN004,Fictional Defender 04,22,CB,right,Imaginary League A,1070,1.68,54.4,true,synthetic_v1
+SYN005,Fictional Defender 05,23,CB,right,Imaginary League B,1175,1.85,55.5,true,synthetic_v1
+SYN006,Fictional Defender 06,24,CB,left,Imaginary League A,1280,,56.6,true,synthetic_v1
+SYN007,Fictional Defender 07,25,CB,right,Imaginary League B,1385,2.19,57.7,true,synthetic_v1
+SYN008,Fictional Defender 08,26,CB,right,Imaginary League A,1490,2.36,58.8,true,synthetic_v1
+SYN009,Fictional Defender 09,27,CB,left,Imaginary League B,1595,2.53,59.9,true,synthetic_v1
+SYN010,Fictional Defender 10,18,CB,right,Imaginary League A,1700,2.70,61.0,true,synthetic_v1
+SYN011,Fictional Defender 11,19,CB,right,Imaginary League B,1805,2.87,62.1,true,synthetic_v1
+SYN012,Fictional Defender 12,20,CB,left,Imaginary League A,1910,3.04,63.2,true,synthetic_v1
+SYN013,Fictional Defender 13,21,CB,right,Imaginary League B,2015,3.21,,true,synthetic_v1
+SYN014,Fictional Defender 14,22,CB,right,Imaginary League A,2120,3.38,65.4,true,synthetic_v1
+SYN015,Fictional Defender 15,23,CB,left,Imaginary League B,2225,3.55,66.5,true,synthetic_v1
+SYN016,Fictional Defender 16,24,CB,right,Imaginary League A,2330,3.72,67.6,true,synthetic_v1
+SYN017,Fictional Defender 17,25,CB,right,Imaginary League B,2435,3.89,68.7,true,synthetic_v1
+SYN018,Fictional Defender 18,26,CB,left,Imaginary League A,2540,4.06,69.8,true,synthetic_v1
+SYN019,Fictional Defender 19,27,CB,right,Imaginary League B,2645,4.23,70.9,true,synthetic_v1
+SYN020,Fictional Defender 20,18,CB,right,Imaginary League A,2750,4.40,72.0,true,synthetic_v1

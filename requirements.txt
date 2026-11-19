@@ -1,0 +1,21 @@
+
+# ScoutMonitor AI - Runtime Dependencies
+
+# AI orchestration and LLM
+langgraph==1.2.22
+langchain-core==1.8.1
+langchain-google-genai==4.5.0
+
+# User interface
+streamlit==1.67.0
+
+# PostgreSQL database
+psycopg[binary]==3.3.9
+
+# Data processing and validation
+pandas==3.1.1
+pydantic==2.14.3
+
+# Configuration and HTTP requests
+python-dotenv==1.2.4
+requests==2.34.2
