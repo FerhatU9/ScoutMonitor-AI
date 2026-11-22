@@ -19,3 +19,7 @@ pydantic==2.14.3
 # Configuration and HTTP requests
 python-dotenv==1.2.4
 requests==2.34.2
+
+# HTTP API (early backend foundation)
+fastapi>=0.115,<1
+uvicorn>=0.30,<1
