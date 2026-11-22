@@ -1,6 +1,6 @@
 -- ScoutMonitor AI: fictional demonstration data
 -- Based on docs/schema.sql (PostgreSQL 18 schema).
--- For the separate scoutmonitor_portfolio_test database ONLY.
+-- For the separate scoutmonitor_demo database ONLY.
 -- No real players, API tokens, passwords, or AI-generated reports are included.
 -- Safe to rerun: existing demonstration rows are left unchanged.
 --
@@ -16,9 +16,9 @@ BEGIN;
 
 DO $$
 BEGIN
-    IF current_database() <> 'scoutmonitor_portfolio_test' THEN
+    IF current_database() <> 'scoutmonitor_demo' THEN
         RAISE EXCEPTION
-            'Demo seed cancelled: connected to %, expected scoutmonitor_portfolio_test',
+            'Demo seed cancelled: connected to %, expected scoutmonitor_demo',
             current_database();
     END IF;
 END

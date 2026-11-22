@@ -1,136 +1,159 @@
 # ScoutMonitor AI
 
-## AI-Powered Football Performance Monitoring & Scouting
+**Evidence-driven football performance monitoring and AI-assisted scouting**
 
-ScoutMonitor AI is a football intelligence application built with Python, LangGraph, PostgreSQL, and Streamlit.
+[![Code quality](https://github.com/FerhatU9/ScoutMonitor-AI/actions/workflows/code-quality.yml/badge.svg)](https://github.com/FerhatU9/ScoutMonitor-AI/actions/workflows/code-quality.yml)
 
-The project combines football performance monitoring, AI-assisted scouting reports, automatic factual validation, and human review.
+ScoutMonitor AI combines football statistics, historical monitoring, AI-generated scouting reports, factual validation, and human approval in a Python application. It demonstrates a review-first workflow: **the system prepares the analysis; a person decides whether to approve it.**
 
-### Current Capabilities
+**Project status:** Working local application and read-only API foundation. Multi-user access, managed deployment, and paid customer features are planned—not currently available.
 
-- **Player Performance Monitoring:** Track football player statistics and identify changes between snapshots.
-- **AI Scouting Reports:** Generate evidence-based scouting report previews.
-- **LangGraph Workflows:** Organize data retrieval, analysis, and report preparation.
-- **PostgreSQL Database:** Store and retrieve football statistics, alerts, and scouting reports.
-- **Human Review:** Require approval or rejection before reports are finalized.
-- **Data Validation:** Verify report facts against stored data and handle missing statistics without assuming they are zero.
-- **Streamlit Dashboard:** Inspect players, monitor statistics, and review AI-generated reports.
-- **Automated Testing:** Six automated tests for synthetic player-data validation; additional integration and operational checks have been performed manually.
+## What it does
 
-### Project Scope
+| Capability | What is implemented |
+|---|---|
+| Player monitoring | Read stored performance snapshots and evaluate changes over time |
+| Missing-data integrity | Distinguish complete, partial, not-reported, and not-collected statistics without inventing zeros |
+| AI scouting reports | Use LangGraph and Google Gemini to draft structured reports from stored evidence |
+| Factual verification | Check five structured report fields against database records; flag mismatches for review |
+| Human decisions | Approve or reject pending reports and inspect reviewed-report history |
+| Database persistence | Store player observations, alerts, and report/review records in PostgreSQL |
+| Streamlit dashboard | View monitoring information, generate report drafts, and review results locally |
+| FastAPI service | Provide a process health endpoint and a read-only synthetic-data validation endpoint |
+| Continuous testing | Run **15 automated tests** on Python 3.11 and 3.12 through GitHub Actions |
 
-The application has been demonstrated locally using stored football statistics. The public repository contains fictional demonstration data rather than provider API exports.
+The automated tests cover synthetic-data validation and the read-only API. Other features have been demonstrated locally but do not yet have complete integration-test coverage.
 
-Core functionality has been tested locally. Further work is required for reproducible deployment, broader testing, and production readiness.
+## How it works
 
-This repository documents a locally demonstrated engineering prototype, not a commercially deployed service.
+~~~mermaid
+flowchart LR
+    A[Football statistics] --> B[(PostgreSQL)]
+    B --> C[LangGraph monitoring]
+    C --> D[Gemini report draft]
+    D --> E[Factual validation]
+    E --> F[Human approval]
+    F --> G[(Reviewed report history)]
+    B --> H[Streamlit dashboard]
+    H --> C
+~~~
 
-## Local Installation (Windows)
+The Streamlit dashboard runs the existing reporting and review workflow. The FastAPI service is a separate, read-only foundation; it does **not** expose private database records or replace the dashboard.
 
-### Requirements
+For the component-level design, see [System Architecture](docs/architecture.md).
 
-- Python 3.11 or newer with compatible dependencies
-- PostgreSQL 18 (the included schema was exported from PostgreSQL 18)
-- Git
-- A Google Gemini API key
-- A Sportmonks API token for features requiring live football data
+## Technology
 
-### 1. Clone the Repository
+| Layer | Technology |
+|---|---|
+| Application and data processing | Python, Pandas, Pydantic |
+| Agent orchestration | LangGraph, LangChain Core |
+| Language model | Google Gemini |
+| Web interface | Streamlit |
+| Read-only HTTP API | FastAPI, Uvicorn |
+| Database | PostgreSQL, psycopg |
+| Quality checks | unittest, pytest, GitHub Actions |
 
-```powershell
+## Repository guide
+
+| Path | Purpose |
+|---|---|
+| `api/main.py` | FastAPI application and read-only endpoints |
+| `scoutmonitor/validation.py` | Reusable synthetic-data validation |
+| `scripts/review_dashboard.py` | Streamlit dashboard |
+| `scripts/scout_structured_graph.py` | AI report generation and factual checks |
+| `scripts/scout_monitoring_graph.py` | Historical monitoring workflow |
+| `scripts/` | Ingestion, storage, monitoring, and manual diagnostic utilities |
+| `tests/` | Automated validation and API tests |
+| `data/fictional_players.csv` | Synthetic player data for repeatable tests |
+| `docs/schema.sql` | PostgreSQL schema |
+| `docs/demo_seed.sql` | Four fictional demonstration players and snapshot states |
+| `docs/api.md` | API endpoints and usage |
+| `docs/product-development.md` | Staged roadmap toward a secure multi-user product |
+
+## Local setup (Windows)
+
+**Requirements:** Python 3.11 or 3.12, PostgreSQL 18 for the included schema dump, and Git. Generate your own Gemini API key for AI reports. A Sportmonks token is needed only for optional provider-backed ingestion.
+
+### 1. Clone and install
+
+~~~powershell
 git clone https://github.com/FerhatU9/ScoutMonitor-AI.git
 cd ScoutMonitor-AI
-```
-
-### 2. Install Python Dependencies
-
-Create a virtual environment:
-
-```powershell
 py -m venv .venv
-```
-
-Install the required packages:
-
-```powershell
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
-```
+~~~
 
-### 3. Configure Environment Variables
+### 2. Run the read-only API (no external credentials required)
 
-Copy the example configuration:
+~~~powershell
+.\.venv\Scripts\python.exe -m uvicorn api.main:app --host 127.0.0.1 --port 8000
+~~~
 
-```powershell
-Copy-Item .env.example .env
-```
+Open the interactive documentation at **http://127.0.0.1:8000/docs**.
 
-Open `.env` and enter your PostgreSQL password and your own Google Gemini API key. The example points to a separate fictional demonstration database. `GEMINI_MODEL` specifies the AI model used for reports. A Sportmonks token is needed only for optional live football-data ingestion, not for viewing the fictional demo records.
-
-Never upload `.env` or real credentials to GitHub.
-
-### 4. Set Up PostgreSQL
-
-For the safe fictional demonstration, create a **separate empty PostgreSQL database** called `scoutmonitor_portfolio_test`, matching `.env.example`. With PostgreSQL 18 installed in its default Windows location, run the following from the repository root in PowerShell:
-
-```powershell
-& "C:\Program Files\PostgreSQL\18\bin\createdb.exe" -h localhost -p 5432 -U postgres scoutmonitor_portfolio_test
-& "C:\Program Files\PostgreSQL\18\bin\psql.exe" -h localhost -p 5432 -U postgres -d scoutmonitor_portfolio_test -v ON_ERROR_STOP=1 -f docs/schema.sql
-& "C:\Program Files\PostgreSQL\18\bin\psql.exe" -h localhost -p 5432 -U postgres -d scoutmonitor_portfolio_test -v ON_ERROR_STOP=1 -f docs/demo_seed.sql
-```
-
-The demonstration contains four fictional players and illustrates complete, partial, unreported, and uncollected statistics, plus historical snapshots. The seed intentionally refuses to run in any database except `scoutmonitor_portfolio_test`. The SQL schema is a PostgreSQL dump and should be restored using `psql`.
-
-**Do not seed your existing `scoutmonitor_db` development database.** If you use your own authorized live data, configure a separate database and ingestion workflow.
-
-### 5. Run the Streamlit Dashboard
-
-```powershell
-.\.venv\Scripts\python.exe -m streamlit run scripts/review_dashboard.py --server.port 8502
-```
-
-Open:
-
-http://localhost:8502
-
-### 6. Run Automated Tests
-
-Install development dependencies:
-
-```powershell
-.\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
-```
-
-Run the six synthetic player-data validation tests (not full API/database integration tests):
-
-```powershell
-.\.venv\Scripts\python.exe -m pytest -q tests
-```
-
-### Repository Structure
-
-| Location | Purpose |
+| Endpoint | Result |
 |---|---|
-| `scoutmonitor/` | Reusable player-data validation |
-| `scripts/review_dashboard.py` | Streamlit application entry point |
-| `scripts/scout_structured_graph.py` | Structured AI reporting and validation workflow |
-| `scripts/scout_monitoring_graph.py` | Shared monitoring nodes and conditional routing |
-| `scripts/` | Football-data integrations, database utilities and manual checks |
-| `tests/` | Automated validation tests |
-| `docs/` | Architecture, PostgreSQL schema and demonstration setup |
-| `data/` | Fictional CSV records used in validation tests |
+| `GET /health` | API process liveness; not a database readiness guarantee |
+| `GET /api/v1/demo/validation` | Counts from the fictional CSV dataset |
+| `GET /openapi.json` | OpenAPI specification |
 
-### Data Sources
+See [API documentation](docs/api.md) for details. The API is not designed to be exposed publicly yet.
 
-The project uses synthetic football demonstration data for local validation. Sportmonks integration is included for supported football-data workflows.
+### 3. Configure the dashboard and database
 
-Synthetic information must not be represented as real player performance data.
+Copy the template and edit the **local** `.env` file:
 
-### Current Limitations
+~~~powershell
+Copy-Item .env.example .env
+~~~
 
-This is a locally demonstrated AI engineering project. Broader testing, reproducible deployment verification, and production security improvements are still required.
+Set your PostgreSQL password and Gemini credentials in `.env`. Do not commit that file. The example configuration uses the isolated database `scoutmonitor_demo`.
 
-### Demonstration and Data Sources
+Create this separate demonstration database and load the schema and fictional seed data. From the repository root, with PostgreSQL 18 installed at the default Windows path:
 
-The principal application is `scripts/review_dashboard.py`, with its AI report workflow in `scripts/scout_structured_graph.py`. The dashboard uses a local PostgreSQL instance; an AI report also requires your own Gemini API key. No hosted public dashboard or production authentication is provided, so do not expose the local Streamlit service to the internet.
+~~~powershell
+& "C:\Program Files\PostgreSQL\18\bin\createdb.exe" -h localhost -p 5432 -U postgres scoutmonitor_demo
+& "C:\Program Files\PostgreSQL\18\bin\psql.exe" -h localhost -p 5432 -U postgres -d scoutmonitor_demo -v ON_ERROR_STOP=1 -f docs/schema.sql
+& "C:\Program Files\PostgreSQL\18\bin\psql.exe" -h localhost -p 5432 -U postgres -d scoutmonitor_demo -v ON_ERROR_STOP=1 -f docs/demo_seed.sql
+~~~
 
-The repository includes original application code, fictional test data, and optional integration scripts. No downloaded Sportmonks API dataset or StatsBomb event dataset is distributed. Only use third-party football data under the applicable license and access terms.
+**Safety:** The seed script refuses to execute against a database with any other name. Never load demonstration data into a database containing important existing records.
+
+### 4. Start the Streamlit dashboard
+
+~~~powershell
+.\.venv\Scripts\python.exe -m streamlit run scripts/review_dashboard.py --server.port 8502
+~~~
+
+Open **http://localhost:8502**. The dashboard requires its configured PostgreSQL database; generating a report also requires a valid Gemini key and a supported model. Some reporting actions require stored player statistics beyond the bundled fictional examples.
+
+## Testing
+
+~~~powershell
+.\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
+.\.venv\Scripts\python.exe -m unittest discover -s tests -v
+~~~
+
+The suite currently has **15 tests**: six original player-data checks, five edge-case checks, and four API checks. GitHub Actions runs the suite and Python syntax checks automatically on pull requests and pushes to `main`. These checks do not replace database integration, authentication, or external-provider testing.
+
+## Data integrity and licensing
+
+ScoutMonitor AI distinguishes:
+
+- **COMPLETE** — required statistics are available
+- **PARTIAL** — one or more required values are unavailable
+- **NOT_REPORTED** — the provider did not report required statistics
+- **NOT_COLLECTED** — no observation has been stored
+
+Unknown values remain unknown; they are never silently treated as zero. Generated narratives require human review even when structured factual checks pass.
+
+This repository includes **fictional football data**, not downloaded Sportmonks or StatsBomb datasets. Integrations that use real data must respect the relevant provider's access and redistribution terms.
+
+## Development direction
+
+ScoutMonitor AI is being developed toward a secure service that other users and organizations can access. Planned work includes database migrations, broader integration testing, authentication and role-based permissions, organization-level data separation, robust data ingestion, cloud deployment, monitoring, and commercial licensing review.
+
+See [Product Development Plan](docs/product-development.md) for milestones and scope.
+
+**Current boundary:** No customer authentication, tenant isolation, billing, hosted public dashboard, or production-service guarantee is claimed. The source is public, but the application is not yet a commercial SaaS product.
