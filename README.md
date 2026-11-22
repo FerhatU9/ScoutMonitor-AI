@@ -20,7 +20,7 @@ ScoutMonitor AI combines football statistics, historical monitoring, AI-generate
 | Database persistence | Store player observations, alerts, and report/review records in PostgreSQL |
 | Streamlit dashboard | View monitoring information, generate report drafts, and review results locally |
 | FastAPI service | Health checks, synthetic player browsing and filtering, single-player details, and two-player comparisons |
-| Continuous testing | Run **27 automated tests** on Python 3.11 and 3.12 through GitHub Actions |
+| Continuous testing | Run **27 API/data tests** on Python 3.11 and 3.12, plus **8 PostgreSQL integration tests**, through GitHub Actions |
 
 The automated tests cover synthetic-data validation and the read-only API. Other features have been demonstrated locally but do not yet have complete integration-test coverage.
 
@@ -67,7 +67,9 @@ For the component-level design, see [System Architecture](docs/architecture.md).
 | `scripts/` | Ingestion, storage, monitoring, and manual diagnostic utilities |
 | `tests/` | Automated validation and API tests |
 | `data/fictional_players.csv` | Synthetic player data for repeatable tests |
-| `docs/schema.sql` | PostgreSQL schema |
+| `docs/schema.sql` | PostgreSQL schema export for reference |
+| `db/migrations/` | Safe, versioned schema creation for new databases |
+| `docs/database.md` | Database migration guide and protection rules |
 | `docs/demo_seed.sql` | Four fictional demonstration players and snapshot states |
 | `docs/api.md` | API endpoints and usage |
 | `docs/product-development.md` | Staged roadmap toward a secure multi-user product |
@@ -139,7 +141,11 @@ Open **http://localhost:8502**. The dashboard requires its configured PostgreSQL
 .\.venv\Scripts\python.exe -m unittest discover -s tests -v
 ~~~
 
-The suite currently has **27 tests**: six player-data checks, five validation edge-case checks, four API foundation checks, and twelve catalog/comparison checks. GitHub Actions runs the suite and Python syntax checks automatically on pull requests and pushes to `main`. These checks do not replace database integration, authentication, or external-provider testing.
+The suite includes **27 API and data-validation tests** plus **8 PostgreSQL integration tests** that run against a disposable CI database. GitHub Actions checks Python syntax, runs the API/data suite on Python 3.11 and 3.12, and verifies database migrations, report storage and review constraints on PostgreSQL 18. Authentication and external-provider integration are not yet covered.
+
+## Database migrations
+
+New, **empty** PostgreSQL databases can be initialized with a guarded Alembic migration. Existing databases containing reports or player information must **not** be stamped or migrated using this baseline. See [Database Migrations](docs/database.md) for the process, safety controls, and isolated PostgreSQL integration tests.
 
 ## Data integrity and licensing
 
