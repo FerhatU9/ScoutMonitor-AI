@@ -45,6 +45,12 @@ def build_database_url():
 def run_migrations_online() -> None:
     engine = create_engine(build_database_url(), poolclass=NullPool)
     try:
+        confirmed_database = os.getenv("SCOUTMONITOR_MIGRATION_DATABASE")
+        if not confirmed_database or confirmed_database != engine.url.database:
+            raise RuntimeError(
+                "Migration cancelled. Set SCOUTMONITOR_MIGRATION_DATABASE to the "
+                "exact name of a NEW EMPTY target database before running Alembic."
+            )
         with engine.connect() as connection:
             tables = set(inspect(connection).get_table_names(schema="public"))
             # Refuse existing manually created schemas before Alembic writes metadata.
