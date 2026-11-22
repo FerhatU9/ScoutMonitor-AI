@@ -20,7 +20,7 @@ ScoutMonitor AI combines football statistics, historical monitoring, AI-generate
 | Database persistence | Store player observations, alerts, and report/review records in PostgreSQL |
 | Streamlit dashboard | View monitoring information, generate report drafts, and review results locally |
 | FastAPI service | Health checks, synthetic player browsing and filtering, single-player details, and two-player comparisons |
-| Continuous testing | Run **34 API/data/security tests** and **16 PostgreSQL integration tests** through GitHub Actions |
+| Continuous testing | Run **38 API/data/security tests** and **24 PostgreSQL integration tests** through GitHub Actions |
 
 The automated tests cover synthetic-data validation and the read-only API. Other features have been demonstrated locally but do not yet have complete integration-test coverage.
 
@@ -73,6 +73,8 @@ For the component-level design, see [System Architecture](docs/architecture.md).
 | `api/security.py` | Signed OIDC access-token verification |
 | `api/organizations.py` | Organization-scoped watchlist APIs and database permission checks |
 | `docs/authentication.md` | Identity-provider setup and organization authorization design |
+| `api/private_notes.py` | Protected, organization-private scouting notes |
+| `docs/private-notes.md` | Scouting-note permissions and database security |
 | `docs/demo_seed.sql` | Four fictional demonstration players and snapshot states |
 | `docs/api.md` | API endpoints and usage |
 | `docs/product-development.md` | Staged roadmap toward a secure multi-user product |
@@ -144,7 +146,7 @@ Open **http://localhost:8502**. The dashboard requires its configured PostgreSQL
 .\.venv\Scripts\python.exe -m unittest discover -s tests -v
 ~~~
 
-The suite includes **34 API, data-validation, and authentication tests** plus **16 PostgreSQL integration tests** that run against a disposable CI database. GitHub Actions checks Python syntax, runs the API/data suite on Python 3.11 and 3.12, and verifies database migrations, report storage and review constraints on PostgreSQL 18. Authentication and external-provider integration are not yet covered.
+The suite includes **38 API, data-validation, and authentication tests** plus **24 PostgreSQL integration tests** that run against a disposable CI database. GitHub Actions checks Python syntax, runs the API/data suite on Python 3.11 and 3.12, and verifies database migrations, report storage and review constraints on PostgreSQL 18. Authentication and external-provider integration are not yet covered.
 
 ## Database migrations
 
@@ -154,7 +156,9 @@ New, **empty** PostgreSQL databases can be initialized with a guarded Alembic mi
 
 The backend now supports signed **OpenID Connect access tokens**, database-backed organization memberships, and organization-scoped player watchlists. Owners, administrators, and scouts can add players to their organization's watchlist; reviewers have read-only access. Membership permissions are checked against PostgreSQL rather than trusted from token roles. See [Identity and Organization Access](docs/authentication.md).
 
-This is a protected foundation, **not** a public signup or customer-hosted service. The existing reporting tables have not yet been partitioned by organization; public deployment awaits comprehensive tenant isolation, security hardening, and authorized data licensing.
+The application also provides [organization-private scouting notes](docs/private-notes.md) with PostgreSQL row-level security and a dedicated restricted database role. These notes are human-authored and separate from the existing AI reports.
+
+This is a protected foundation, **not** a public signup or customer-hosted service. The legacy AI reporting tables and Streamlit dashboard are not yet tenant-isolated; public deployment awaits comprehensive authorization, data isolation, security hardening, and licensing.
 
 ## Data integrity and licensing
 
