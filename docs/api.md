@@ -72,3 +72,16 @@ The API tests do not require credentials or network access to Gemini, Sportmonks
 - There is no authentication, authorization, customer tenancy, persistence, or hosted deployment yet.
 - Keep the service bound to `127.0.0.1` locally; do not expose it publicly without security controls.
 - Next steps: API request logging, safe configuration handling, versioned DB migrations, organization-scoped authentication, and database integration tests.
+
+## Protected organization watchlists
+
+New routes require a valid externally issued OIDC access token **and** an active PostgreSQL membership in the requested organization.
+
+| Endpoint | Required permission |
+|---|---|
+| `GET /api/v1/organizations/{organization_id}/watchlist` | Active organization member |
+| `POST /api/v1/organizations/{organization_id}/watchlist` | Active owner, admin, or scout |
+
+The POST body is `{"player_id": 990001}`. The referenced player must already exist in PostgreSQL. Other organizations' watchlists are never returned or modified. Reviewer accounts have read-only access. This implementation does **not** provide user registration, token issuance, role assignment, or public hosting.
+
+See [Identity and Organization Access](authentication.md) for identity-provider configuration and safeguards.
