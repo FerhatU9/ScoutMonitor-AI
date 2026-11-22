@@ -19,8 +19,8 @@ ScoutMonitor AI combines football statistics, historical monitoring, AI-generate
 | Human decisions | Approve or reject pending reports and inspect reviewed-report history |
 | Database persistence | Store player observations, alerts, and report/review records in PostgreSQL |
 | Streamlit dashboard | View monitoring information, generate report drafts, and review results locally |
-| FastAPI service | Provide a process health endpoint and a read-only synthetic-data validation endpoint |
-| Continuous testing | Run **15 automated tests** on Python 3.11 and 3.12 through GitHub Actions |
+| FastAPI service | Health checks, synthetic player browsing and filtering, single-player details, and two-player comparisons |
+| Continuous testing | Run **27 automated tests** on Python 3.11 and 3.12 through GitHub Actions |
 
 The automated tests cover synthetic-data validation and the read-only API. Other features have been demonstrated locally but do not yet have complete integration-test coverage.
 
@@ -60,6 +60,7 @@ For the component-level design, see [System Architecture](docs/architecture.md).
 |---|---|
 | `api/main.py` | FastAPI application and read-only endpoints |
 | `scoutmonitor/validation.py` | Reusable synthetic-data validation |
+| `scoutmonitor/demo_catalog.py` | Safe synthetic player catalog and metric comparisons |
 | `scripts/review_dashboard.py` | Streamlit dashboard |
 | `scripts/scout_structured_graph.py` | AI report generation and factual checks |
 | `scripts/scout_monitoring_graph.py` | Historical monitoring workflow |
@@ -96,6 +97,9 @@ Open the interactive documentation at **http://127.0.0.1:8000/docs**.
 |---|---|
 | `GET /health` | API process liveness; not a database readiness guarantee |
 | `GET /api/v1/demo/validation` | Counts from the fictional CSV dataset |
+| `GET /api/v1/demo/players` | Browse fictional players with filters and pagination |
+| `GET /api/v1/demo/players/{player_id}` | Read one fictional player's record |
+| `GET /api/v1/demo/compare` | Compare two fictional players, preserving unknown metrics |
 | `GET /openapi.json` | OpenAPI specification |
 
 See [API documentation](docs/api.md) for details. The API is not designed to be exposed publicly yet.
@@ -135,7 +139,7 @@ Open **http://localhost:8502**. The dashboard requires its configured PostgreSQL
 .\.venv\Scripts\python.exe -m unittest discover -s tests -v
 ~~~
 
-The suite currently has **15 tests**: six original player-data checks, five edge-case checks, and four API checks. GitHub Actions runs the suite and Python syntax checks automatically on pull requests and pushes to `main`. These checks do not replace database integration, authentication, or external-provider testing.
+The suite currently has **27 tests**: six player-data checks, five validation edge-case checks, four API foundation checks, and twelve catalog/comparison checks. GitHub Actions runs the suite and Python syntax checks automatically on pull requests and pushes to `main`. These checks do not replace database integration, authentication, or external-provider testing.
 
 ## Data integrity and licensing
 
