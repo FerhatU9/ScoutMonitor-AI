@@ -51,7 +51,9 @@ def run_migrations_online() -> None:
                 "Migration cancelled. Set SCOUTMONITOR_MIGRATION_DATABASE to the "
                 "exact name of a NEW EMPTY target database before running Alembic."
             )
-        with engine.connect() as connection:
+        # Explicit transaction: inspection opens a transaction under SQLAlchemy 2;
+        # commit schema DDL at the end of the migration, never roll it back.
+        with engine.begin() as connection:
             tables = set(inspect(connection).get_table_names(schema="public"))
             # Refuse existing manually created schemas before Alembic writes metadata.
             if tables and "alembic_version" not in tables:
