@@ -1,0 +1,22 @@
+# Python environments and caches
+.venv/
+__pycache__/
+.pytest_cache/
+*.py[cod]
+
+# Local credentials and configuration
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+
+# Editor files and OS metadata
+.vscode/
+.DS_Store
+
+# Generated data, logs, and local backups
+logs/
+data/*.json
+installed-packages.txt
+scripts/*backup*.py
+*.bak
