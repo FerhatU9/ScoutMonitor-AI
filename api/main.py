@@ -4,6 +4,8 @@ from pathlib import Path
 from typing import Literal
 
 from fastapi import FastAPI, HTTPException, Query
+
+from api.organizations import router as organizations_router
 from pydantic import BaseModel
 
 from scoutmonitor.demo_catalog import (
@@ -22,6 +24,9 @@ app = FastAPI(
     description="Read-only synthetic-data API. No customer records, real football-provider data, or AI generation endpoints.",
     version="0.2.0",
 )
+
+
+app.include_router(organizations_router)
 
 
 class HealthResponse(BaseModel):
