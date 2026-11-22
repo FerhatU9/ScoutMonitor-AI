@@ -86,3 +86,8 @@ Before public hosting, add these protections and evaluate the full authenticatio
 The unit suite exercises token rejection without contacting an identity provider. The PostgreSQL CI job uses a disposable database and dependency-injected **test identities only** to validate organization isolation, role restrictions, and watchlist operations.
 
 See [Database Migrations](database.md) and [API Reference](api.md) for related infrastructure.
+
+
+## Private scouting notes
+
+The private-notes API requires `SCOUTMONITOR_PRIVATE_DATABASE_URL` configured for a dedicated, non-superuser runtime role. Membership permissions are checked in the API and note rows are also filtered by PostgreSQL RLS. See [Private Scouting Notes](private-notes.md) for limitations and privileges.

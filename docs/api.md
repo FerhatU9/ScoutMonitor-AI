@@ -85,3 +85,13 @@ New routes require a valid externally issued OIDC access token **and** an active
 The POST body is `{"player_id": 990001}`. The referenced player must already exist in PostgreSQL. Other organizations' watchlists are never returned or modified. Reviewer accounts have read-only access. This implementation does **not** provide user registration, token issuance, role assignment, or public hosting.
 
 See [Identity and Organization Access](authentication.md) for identity-provider configuration and safeguards.
+
+
+## Private scouting notes
+
+These endpoints require a trusted OIDC identity and an active organization membership:
+
+- `GET /api/v1/organizations/{organization_id}/notes` — bounded read-only list, 1–100 notes per page
+- `POST /api/v1/organizations/{organization_id}/notes` — creates a human-authored note; available to owner, admin, and scout
+
+The notes are organization-owned and protected by a restricted PostgreSQL role with row-level security. Existing AI reports are **not** accessible through these endpoints. See [Private Scouting Notes](private-notes.md).

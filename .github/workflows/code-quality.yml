@@ -53,6 +53,7 @@ jobs:
       SCOUTMONITOR_DATABASE_URL: postgresql+psycopg://postgres:integration-only@127.0.0.1:5432/scoutmonitor_ci
       SCOUTMONITOR_MIGRATION_DATABASE: scoutmonitor_ci
       SCOUTMONITOR_RUN_DB_TESTS: "1"
+      SCOUTMONITOR_PRIVATE_DATABASE_URL: postgresql+psycopg://scoutmonitor_runtime:ci-runtime-only@127.0.0.1:5432/scoutmonitor_ci
     steps:
       - name: Check out source
         uses: actions/checkout@v4
@@ -66,5 +67,16 @@ jobs:
         run: python -m alembic -c alembic.ini upgrade head
       - name: Verify migrations can be rerun safely
         run: python -m alembic -c alembic.ini upgrade head
-      - name: Test PostgreSQL constraints and report review
+      - name: Create restricted application database role
+        env:
+          PGPASSWORD: integration-only
+        run: |
+          psql -h 127.0.0.1 -U postgres -d scoutmonitor_ci -v ON_ERROR_STOP=1 <<'SQL'
+          CREATE ROLE scoutmonitor_runtime LOGIN PASSWORD 'ci-runtime-only';
+          GRANT CONNECT ON DATABASE scoutmonitor_ci TO scoutmonitor_runtime;
+          GRANT USAGE ON SCHEMA public TO scoutmonitor_runtime;
+          GRANT SELECT ON organizations, organization_memberships, identity_users, players TO scoutmonitor_runtime;
+          GRANT SELECT, INSERT ON organization_scouting_notes TO scoutmonitor_runtime;
+          SQL
+      - name: Test PostgreSQL constraints and organization isolation
         run: python -m unittest discover -s integration_tests -v

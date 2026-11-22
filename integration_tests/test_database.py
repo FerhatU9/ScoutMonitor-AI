@@ -77,7 +77,7 @@ class TestDatabaseIntegration(unittest.TestCase):
     def test_initial_schema_and_revision(self):
         with self.connection.cursor() as cursor:
             cursor.execute("SELECT version_num FROM alembic_version")
-            self.assertEqual(cursor.fetchone()[0], "0002")
+            self.assertEqual(cursor.fetchone()[0], "0003")
             cursor.execute(
                 "SELECT COUNT(*) FROM information_schema.tables "
                 "WHERE table_schema = 'public' AND table_name IN "
