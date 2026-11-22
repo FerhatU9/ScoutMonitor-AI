@@ -6,6 +6,7 @@ from typing import Literal
 from fastapi import FastAPI, HTTPException, Query
 
 from api.organizations import router as organizations_router
+from api.private_notes import router as notes_router
 from pydantic import BaseModel
 
 from scoutmonitor.demo_catalog import (
@@ -27,6 +28,7 @@ app = FastAPI(
 
 
 app.include_router(organizations_router)
+app.include_router(notes_router)
 
 
 class HealthResponse(BaseModel):
