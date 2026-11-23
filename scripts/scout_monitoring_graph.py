@@ -117,10 +117,11 @@ def prepare_alert_draft(state: ScoutState):
     new_goals = goals - old_goals
     new_assists = assists - old_assists
 
+    # Database observations do not by themselves establish provider provenance.
     source_label = (
-        "Synthetic demonstration data"
-        if os.getenv("DB_NAME") == "scoutmonitor_portfolio_test"
-        else "Stored Sportmonks statistics"
+        "Fictional demonstration data"
+        if os.getenv("DB_NAME") == "scoutmonitor_demo"
+        else "Stored football observations (provider not independently verified)"
     )
 
     message = (
@@ -138,7 +139,7 @@ def prepare_alert_draft(state: ScoutState):
     return {"summary": message}
 
 
-# Build our improved LangGraph workflow
+# Build the LangGraph monitoring workflow
 workflow = StateGraph(ScoutState)
 
 # Register our four nodes
