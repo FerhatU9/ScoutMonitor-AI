@@ -6,7 +6,7 @@
 
 ScoutMonitor AI combines football statistics, historical monitoring, AI-generated scouting reports, factual validation, and human approval in a Python application. It demonstrates a review-first workflow: **the system prepares the analysis; a person decides whether to approve it.**
 
-**Public interactive showcase:** [ScoutMonitor AI website](https://ferhatu9.github.io/ScoutMonitor-AI/) — fictional player browsing and comparisons only. Website publishing must be enabled in GitHub Pages settings before this link works. See [Website setup](docs/website.md).
+**Live interactive showcase:** [Explore ScoutMonitor AI](https://ferhatu9.github.io/ScoutMonitor-AI/) — a public fictional-player explorer and comparison website, hosted on GitHub Pages. It does not run the private PostgreSQL, Gemini, or account-based backend. See [Website documentation](docs/website.md).
 
 **Project status:** Local AI scouting dashboard plus a developing FastAPI backend. Organization memberships, restricted watchlists and private scouting notes are implemented, but customer sign-in, tenant-isolated AI reports, hosted deployment, and paid features are not available.
 
@@ -84,6 +84,8 @@ For the component-level design, see [System Architecture](docs/architecture.md).
 | `docs/product-development.md` | Staged roadmap toward a secure multi-user product |
 | `docs/index.html` | Public interactive website, published through GitHub Pages when enabled |
 | `docs/website.md` | Website publishing and implementation guidance |
+
+For focused developer guidance, see the [API overview](api/README.md), [domain utilities](scoutmonitor/README.md), [monitoring scripts](scripts/README.md), [database migrations](db/migrations/README.md), [unit tests](tests/README.md), and [documentation index](docs/README.md).
 
 ## Local setup (Windows)
 
