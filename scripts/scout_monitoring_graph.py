@@ -7,7 +7,7 @@ import psycopg
 from dotenv import load_dotenv
 from langgraph.graph import StateGraph, START, END
 
-from monitor_logic import detect_change
+from monitor_logic import detect_change, observation_source_description
 
 # Load database settings
 project_folder = Path(__file__).resolve().parent.parent
@@ -117,11 +117,7 @@ def prepare_alert_draft(state: ScoutState):
     new_goals = goals - old_goals
     new_assists = assists - old_assists
 
-    source_label = (
-        "Synthetic demonstration data"
-        if os.getenv("DB_NAME") == "scoutmonitor_portfolio_test"
-        else "Stored Sportmonks statistics"
-    )
+    source_label = observation_source_description(os.getenv("DB_NAME"))
 
     message = (
         "PERFORMANCE ALERT — REVIEW REQUIRED\n"
@@ -138,7 +134,7 @@ def prepare_alert_draft(state: ScoutState):
     return {"summary": message}
 
 
-# Build our improved LangGraph workflow
+# Build the LangGraph monitoring workflow
 workflow = StateGraph(ScoutState)
 
 # Register our four nodes
