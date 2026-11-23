@@ -1,6 +1,6 @@
 # ScoutMonitor AI API
 
-The FastAPI backend is an early, **read-only** foundation. It does not replace the working Streamlit dashboard, connect to a customer database, or provide user accounts.
+The FastAPI backend provides a **read-only synthetic player catalog** and separate **protected, database-backed organization watchlist and scouting-note endpoints**. It does not replace the working Streamlit dashboard, provide customer signup, or serve legacy AI reports. Protected routes require a configured trusted identity provider and PostgreSQL permissions.
 
 ## Start the API locally
 
@@ -69,9 +69,9 @@ The API tests do not require credentials or network access to Gemini, Sportmonks
 ## Important limitations
 
 - A successful `/health` response does **not** establish database or external API readiness.
-- There is no authentication, authorization, customer tenancy, persistence, or hosted deployment yet.
+- The **synthetic demonstration endpoints** require no login and do not persist changes. The separate organization watchlist and note endpoints implement access-token verification, database membership checks, and scoped persistence; customer signup, full tenant isolation of legacy AI reports, and hosted deployment are **not** implemented.
 - Keep the service bound to `127.0.0.1` locally; do not expose it publicly without security controls.
-- Next steps: API request logging, safe configuration handling, versioned DB migrations, organization-scoped authentication, and database integration tests.
+- Next steps: operational logging, complete customer identity-provider integration, broader authorization tests, tenant isolation for legacy AI workflows, and secure deployment. Versioned database migrations and isolated PostgreSQL integration tests are already implemented.
 
 ## Protected organization watchlists
 
@@ -82,7 +82,7 @@ New routes require a valid externally issued OIDC access token **and** an active
 | `GET /api/v1/organizations/{organization_id}/watchlist` | Active organization member |
 | `POST /api/v1/organizations/{organization_id}/watchlist` | Active owner, admin, or scout |
 
-The POST body is `{"player_id": 990001}`. The referenced player must already exist in PostgreSQL. Other organizations' watchlists are never returned or modified. Reviewer accounts have read-only access. This implementation does **not** provide user registration, token issuance, role assignment, or public hosting.
+The POST body is `{"player_id": 990001}`. The referenced player must already exist in PostgreSQL. Other organizations' watchlists are never returned or modified. Reviewer accounts have read-only access. This implementation does **not** provide user registration, token issuance, customer role administration, or public hosting.
 
 See [Identity and Organization Access](authentication.md) for identity-provider configuration and safeguards.
 

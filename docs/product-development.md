@@ -30,7 +30,7 @@ The repository currently includes:
 - A FastAPI service with read-only synthetic player browsing and comparisons.
 - PostgreSQL migrations 0001–0003 on newly created, empty Alembic-managed databases.
 - OIDC token verification, organization memberships, protected watchlists, and organization-private **human-authored** scouting notes.
-- Automated Python and isolated PostgreSQL checks (38 API/data/security tests plus 24 DB tests in the latest verified suite).
+- Automated Python and isolated PostgreSQL checks (**41 API/data/security tests and 24 database integration tests** in the latest verified GitHub Actions run). The runtime dependency-import check also passed.
 
 **Not yet verified:** an end-to-end hosted customer journey, actual customer identity-provider setup, complete organization isolation of legacy AI reports and source data, commercial football-data rights, operational recovery, or payment functionality.
 
@@ -40,7 +40,7 @@ The repository currently includes:
 
 ### 1. Reproducible development and honest verification
 
-- **Tools:** Docker Compose, FastAPI, PostgreSQL 18, Alembic, pytest, Playwright later.
+- **Tools:** Docker Compose (planned for repeatable local setup), FastAPI, PostgreSQL 18, Alembic, unittest/pytest, Playwright later.
 - Establish a documented, clean local environment without modifying existing reports.
 - Add a database readiness check separate from process liveness.
 - Use integration tests that exercise the API, database, and failures; report real test coverage rather than just test counts.
