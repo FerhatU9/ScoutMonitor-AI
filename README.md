@@ -62,7 +62,7 @@ For the component-level design, see [System Architecture](docs/architecture.md).
 | `api/main.py` | FastAPI application and read-only endpoints |
 | `scoutmonitor/validation.py` | Reusable synthetic-data validation |
 | `scoutmonitor/demo_catalog.py` | Safe synthetic player catalog and metric comparisons |
-| `scoutmonitor/provenance.py` | Truthful source labels for fictional and unverified observations |
+| `scripts/monitor_logic.py` | Historical monitoring rules and truthful source labels |
 | `scripts/review_dashboard.py` | Streamlit dashboard |
 | `scripts/scout_structured_graph.py` | AI report generation and factual checks |
 | `scripts/scout_monitoring_graph.py` | Historical monitoring workflow |
