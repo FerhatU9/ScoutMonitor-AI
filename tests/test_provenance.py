@@ -2,7 +2,7 @@
 
 import unittest
 
-from scoutmonitor.provenance import observation_source_description
+from scripts.monitor_logic import observation_source_description
 
 
 class TestProvenanceDescriptions(unittest.TestCase):
