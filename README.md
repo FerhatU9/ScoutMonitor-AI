@@ -20,7 +20,7 @@ ScoutMonitor AI combines football statistics, historical monitoring, AI-generate
 | Database persistence | Store player observations, alerts, and report/review records in PostgreSQL |
 | Streamlit dashboard | View monitoring information, generate report drafts, and review results locally |
 | FastAPI service | Synthetic player browsing and comparisons; protected organization watchlists and human-authored scouting notes |
-| Continuous testing | Run **38 API/data/security tests** and **24 PostgreSQL integration tests** through GitHub Actions |
+| Continuous testing | Run **41 API/data/security tests** and **24 PostgreSQL integration tests** through GitHub Actions |
 
 The automated tests cover synthetic-data validation and the read-only API. Other features have been demonstrated locally but do not yet have complete integration-test coverage.
 
@@ -62,6 +62,7 @@ For the component-level design, see [System Architecture](docs/architecture.md).
 | `api/main.py` | FastAPI application and read-only endpoints |
 | `scoutmonitor/validation.py` | Reusable synthetic-data validation |
 | `scoutmonitor/demo_catalog.py` | Safe synthetic player catalog and metric comparisons |
+| `scoutmonitor/provenance.py` | Truthful source labels for fictional and unverified observations |
 | `scripts/review_dashboard.py` | Streamlit dashboard |
 | `scripts/scout_structured_graph.py` | AI report generation and factual checks |
 | `scripts/scout_monitoring_graph.py` | Historical monitoring workflow |
@@ -148,7 +149,7 @@ Open **http://localhost:8502**. The dashboard requires its configured PostgreSQL
 .\.venv\Scripts\python.exe -m unittest discover -s tests -v
 ~~~
 
-The suite includes **38 API, data-validation, and authentication tests** plus **24 PostgreSQL integration tests** that run against a disposable CI database. GitHub Actions checks Python syntax, runs the API/data suite on Python 3.11 and 3.12, and verifies PostgreSQL migrations, selected report-storage workflows, roles and note isolation. Real identity-provider integration, the full Streamlit-to-AI workflow, and external football-data ingestion still need independent verification.
+The suite includes **41 API, data-validation, authentication, and provenance tests** plus **24 PostgreSQL integration tests** that run against a disposable CI database. GitHub Actions checks Python syntax, runs the API/data suite on Python 3.11 and 3.12, verifies PostgreSQL migrations, selected report-storage workflows, roles and note isolation, and checks full runtime dependency installation on Python 3.12. Real identity-provider integration, the full Streamlit-to-AI workflow, and external football-data ingestion still need independent verification.
 
 ## Database migrations
 
