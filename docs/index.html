@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1217">
+  <meta name="description" content="Explore ScoutMonitor AI: an evidence-led football scouting platform. Try the interactive fictional-player demo and explore the engineering behind the project.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="ScoutMonitor AI | Football Intelligence">
+  <meta property="og:description" content="Evidence first. Decisions with confidence. Explore an interactive fictional-player scouting demo.">
+  <title>ScoutMonitor AI — Football Intelligence</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/site.css">
+  <script src="assets/site.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <div class="site-shell">
+    <header class="header">
+      <a class="brand" href="#overview" aria-label="ScoutMonitor AI home">
+        <span class="brand-symbol" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span class="brand-text">ScoutMonitor <em>AI</em></span>
+      </a>
+      <nav aria-label="Primary navigation" class="nav">
+        <a href="#overview" data-nav="overview" class="active">Overview</a>
+        <a href="#explorer" data-nav="explorer">Player explorer</a>
+        <a href="#comparison" data-nav="comparison">Comparison</a>
+        <a href="#technology" data-nav="technology">Technology</a>
+      </nav>
+      <a class="header-github" href="https://github.com/FerhatU9/ScoutMonitor-AI" target="_blank" rel="noopener noreferrer">View on GitHub <span aria-hidden="true">↗</span></a>
+    </header>
+
+    <main id="main">
+      <section id="overview" class="hero section-wrap">
+        <div class="hero-copy">
+          <div class="eyebrow"><span class="pulse"></span> FOOTBALL INTELLIGENCE / ENGINEERING SHOWCASE</div>
+          <h1>See the game.<br><span>Beyond the score.</span></h1>
+          <p class="lead">A smarter way to monitor performance, compare player profiles, and turn football data into evidence-led scouting decisions.</p>
+          <div class="hero-ctas">
+            <a class="btn btn-primary" href="#explorer">Explore players <span aria-hidden="true">↗</span></a>
+            <a class="btn btn-outline" href="#comparison">Compare profiles <span aria-hidden="true">→</span></a>
+          </div>
+          <div class="hero-disclosure"><span class="info-icon" aria-hidden="true">i</span> Interactive showcase with 20 fictional players. No live data or hosted AI generation.</div>
+        </div>
+        <div class="hero-visual" aria-label="Illustrative scouting data interface">
+          <div class="visual-top"><span class="visual-label">PLAYER INTELLIGENCE / 01</span><span class="live-tag"><span></span> DEMO DATA</span></div>
+          <div class="pitch-area">
+            <div class="pitch-grid" aria-hidden="true">
+              <svg viewBox="0 0 440 248" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Abstract football pitch with tracked player positions">
+                <rect x="23" y="12" width="394" height="224" rx="2" fill="none" stroke="currentColor" stroke-width="1.25" opacity=".35"/>
+                <path d="M220 12V236 M23 70H80V178H23 M417 70H360V178H417" stroke="currentColor" stroke-width="1.25" fill="none" opacity=".35"/>
+                <circle cx="220" cy="124" r="48" fill="none" stroke="currentColor" stroke-width="1.25" opacity=".35"/>
+                <circle cx="220" cy="124" r="3" fill="currentColor" opacity=".4"/>
+                <path d="M23 94H50V154H23 M417 94H390V154H417" fill="none" stroke="currentColor" opacity=".25"/>
+                <path d="M106 172 Q178 55 314 80" stroke="#b9fa72" stroke-width="2" stroke-dasharray="7 7" fill="none" opacity=".8"/>
+                <path d="M116 173 L164 136 L207 159 L255 100 L314 80" stroke="#b9fa72" stroke-width="1" fill="none" opacity=".25"/>
+                <g fill="#b9fa72" stroke="#12200a" stroke-width="3"><circle cx="106" cy="172" r="7"/><circle cx="164" cy="136" r="6"/><circle cx="255" cy="100" r="7"/><circle cx="314" cy="80" r="9"/></g>
+                <g fill="#dbe6ed" opacity=".55"><circle cx="70" cy="74" r="4"/><circle cx="93" cy="120" r="4"/><circle cx="173" cy="75" r="4"/><circle cx="195" cy="202" r="4"/><circle cx="349" cy="170" r="4"/><circle cx="387" cy="108" r="4"/></g>
+                <circle cx="314" cy="80" r="19" stroke="#b9fa72" fill="none" opacity=".45"/>
+              </svg>
+              <div class="pitch-overlay"><span class="tiny-caps">TRACKED PROFILE</span><strong>SYN020</strong><small>Centre back · Fictional League A</small></div>
+            </div>
+          </div>
+          <div class="visual-bottom">
+            <div><span>PROGRESSIVE PASSES / 90</span><strong>4.40 <small>▲</small></strong></div>
+            <div><span>DEFENSIVE DUEL WIN %</span><strong>72.0<small>%</small></strong></div>
+            <div><span>PLAYING MINUTES</span><strong>2,750</strong></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="statline section-wrap" aria-label="Demo at a glance">
+        <div class="statline-item"><span class="statline-number" id="hero-count">20</span><span class="statline-label">FICTIONAL PROFILES</span></div>
+        <div class="statline-item"><span class="statline-number">02</span><span class="statline-label">COMPARABLE METRICS</span></div>
+        <div class="statline-item"><span class="statline-number">01</span><span class="statline-label">EVIDENCE-FIRST APPROACH</span></div>
+        <div class="statline-aside">Every missing metric stays missing.<br>Never manufactured into a zero.</div>
+      </section>
+
+      <section id="explorer" class="section-wrap explorer section-pad">
+        <div class="section-head">
+          <div><p class="section-kicker">01 / PLAYER EXPLORER</p><h2>Discover the <span>details.</span></h2><p>Search, filter and inspect fictional player profiles. All statistics are bundled sample data.</p></div>
+          <span class="section-counter" id="result-count">20 PLAYERS</span>
+        </div>
+        <div class="filter-bar">
+          <label class="field field-search"><span>SEARCH PLAYER</span><input type="search" id="search" placeholder="Search name or player ID…" autocomplete="off"></label>
+          <label class="field"><span>LEAGUE</span><select id="league"><option value="">All leagues</option><option value="Imaginary League A">Imaginary League A</option><option value="Imaginary League B">Imaginary League B</option></select></label>
+          <label class="field"><span>PREFERRED FOOT</span><select id="foot"><option value="">Any foot</option><option value="left">Left</option><option value="right">Right</option><option value="both">Both</option></select></label>
+          <label class="field"><span>SORT BY</span><select id="sort"><option value="player_id">Player ID</option><option value="minutes">Minutes played</option><option value="progressive_passes_per90">Progressive passes / 90</option><option value="defensive_duel_win_pct">Defensive duel win %</option></select></label>
+        </div>
+        <div id="player-grid" class="player-grid" aria-live="polite"><p class="placeholder-msg">Loading fictional players…</p></div>
+        <div class="grid-footer"><span id="grid-status">DATA SOURCE / SYNTHETIC_V1</span><button class="text-btn" id="reset-filters" type="button">Reset filters <span aria-hidden="true">↗</span></button></div>
+      </section>
+
+      <section id="comparison" class="compare-section section-pad">
+        <div class="section-wrap">
+          <div class="section-head"><div><p class="section-kicker">02 / PLAYER COMPARISON</p><h2>Side by side. <span>Fact by fact.</span></h2><p>Two fictional centre-backs, compared on available metrics. Differences show the second player minus the first.</p></div></div>
+          <div class="compare-controls">
+            <label class="field"><span>PLAYER A</span><select id="compare-a"><option>Loading players…</option></select></label>
+            <button type="button" id="swap" class="swap-button" aria-label="Swap compared players" title="Swap players">⇄</button>
+            <label class="field"><span>PLAYER B</span><select id="compare-b"><option>Loading players…</option></select></label>
+          </div>
+          <div id="comparison-output" aria-live="polite" class="compare-output"><p class="placeholder-msg">Preparing player comparison…</p></div>
+        </div>
+      </section>
+
+      <section id="technology" class="section-wrap technology section-pad">
+        <div class="section-head"><div><p class="section-kicker">03 / BEHIND THE PLATFORM</p><h2>Engineered for <span>better decisions.</span></h2><p>ScoutMonitor AI combines a working local AI workflow with a developing, security-focused backend.</p></div></div>
+        <div class="capability-grid">
+          <article class="capability"><span class="cap-num">01 /</span><div class="cap-mark">◎</div><h3>Evidence-led AI</h3><p>LangGraph and Google Gemini support structured scouting reports. Key factual fields are checked against stored observations and require human review.</p><span class="cap-foot">LOCAL APPLICATION</span></article>
+          <article class="capability"><span class="cap-num">02 /</span><div class="cap-mark">⌁</div><h3>Player intelligence</h3><p>Compare available performance indicators, monitor stored snapshots and preserve missing statistics as genuinely unknown.</p><span class="cap-foot">INTERACTIVE DEMO + LOCAL TOOLS</span></article>
+          <article class="capability"><span class="cap-num">03 /</span><div class="cap-mark">▦</div><h3>Security foundations</h3><p>FastAPI, PostgreSQL, verified tokens, organization memberships and private scouting notes form the foundation for customer access.</p><span class="cap-foot">BACKEND DEVELOPMENT</span></article>
+        </div>
+        <div class="stack-row"><span>ENGINEERING STACK</span><div>Python <i>·</i> FastAPI <i>·</i> LangGraph <i>·</i> Gemini <i>·</i> PostgreSQL <i>·</i> Streamlit</div></div>
+      </section>
+
+      <section class="end-cta section-wrap">
+        <div><p class="section-kicker">BUILT IN THE OPEN</p><h2>Explore the thinking<br><span>behind the platform.</span></h2><p>Source code, implementation notes, and the development roadmap are available on GitHub.</p></div>
+        <a href="https://github.com/FerhatU9/ScoutMonitor-AI" class="btn btn-primary" target="_blank" rel="noopener noreferrer">Explore the repository <span aria-hidden="true">↗</span></a>
+      </section>
+    </main>
+    <footer class="footer section-wrap"><div><span class="brand-symbol small" aria-hidden="true"><span></span><span></span><span></span></span><strong>ScoutMonitor AI</strong><p>Football intelligence. Grounded in evidence.</p></div><div class="footer-right"><a href="#overview">Back to top ↑</a><a href="https://github.com/FerhatU9/ScoutMonitor-AI" target="_blank" rel="noopener noreferrer">GitHub ↗</a><small>Interactive demonstration · Fictional player data · No live football feeds</small></div></footer>
+  </div>
+</body>
+</html>

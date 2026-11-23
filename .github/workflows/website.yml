@@ -1,0 +1,58 @@
+name: Website quality
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/index.html'
+      - 'docs/assets/**'
+      - '.github/workflows/website.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'docs/index.html'
+      - 'docs/assets/**'
+      - '.github/workflows/website.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  website:
+    name: Static website checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Check JavaScript syntax
+        run: node --check docs/assets/site.js
+      - name: Verify website and synthetic dataset
+        run: |
+          python - <<'PY'
+          import csv
+          from pathlib import Path
+
+          html = Path("docs/index.html").read_text(encoding="utf-8")
+          css = Path("docs/assets/site.css").read_text(encoding="utf-8")
+          js = Path("docs/assets/site.js").read_text(encoding="utf-8")
+          with Path("docs/assets/players.csv").open(newline="", encoding="utf-8") as fp:
+              published = list(csv.DictReader(fp))
+          with Path("data/fictional_players.csv").open(newline="", encoding="utf-8") as fp:
+              source = list(csv.DictReader(fp))
+
+          assert published == source, "Published dataset differs from repository synthetic data"
+          assert len(published) == 20, "Demo must contain 20 fictional players"
+          assert all(row["is_synthetic"] == "true" and row["source"] == "synthetic_v1" for row in published)
+          assert any(row["progressive_passes_per90"] == "" for row in published), "Missing data must be preserved"
+          assert any(row["defensive_duel_win_pct"] == "" for row in published), "Missing data must be preserved"
+
+          for path in ("assets/site.css", "assets/site.js", "assets/players.csv", "assets/favicon.svg"):
+              assert Path("docs", path).exists(), f"Missing referenced asset: {path}"
+          for anchor in ("overview", "explorer", "comparison", "technology"):
+              assert f'id="{anchor}"' in html, f"Missing navigation anchor: {anchor}"
+          assert "ScoutMonitor AI" in html and "fictional" in html.lower()
+          assert "fetch(" in js and "shortlist" in js and "missing" in js.lower()
+          assert len(css) > 1000
+          print("Website assets, 20 synthetic profiles, source labels, and missing values validated")
+          PY
