@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from langgraph.graph import StateGraph, START, END
 
 from monitor_logic import detect_change
+from scoutmonitor.provenance import observation_source_description
 
 # Load database settings
 project_folder = Path(__file__).resolve().parent.parent
@@ -117,12 +118,7 @@ def prepare_alert_draft(state: ScoutState):
     new_goals = goals - old_goals
     new_assists = assists - old_assists
 
-    # Database observations do not by themselves establish provider provenance.
-    source_label = (
-        "Fictional demonstration data"
-        if os.getenv("DB_NAME") == "scoutmonitor_demo"
-        else "Stored football observations (provider not independently verified)"
-    )
+    source_label = observation_source_description(os.getenv("DB_NAME"))
 
     message = (
         "PERFORMANCE ALERT — REVIEW REQUIRED\n"
