@@ -96,4 +96,4 @@ jobs:
       - name: Import application libraries
         run: |
           python -c "import fastapi, streamlit, langgraph, langchain_google_genai, psycopg, sqlalchemy, alembic, jwt"
-          python -c "import api.main; import scoutmonitor.provenance"
+          python -c "import api.main; import scripts.monitor_logic"
