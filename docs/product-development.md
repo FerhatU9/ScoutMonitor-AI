@@ -1,94 +1,125 @@
-# ScoutMonitor AI — Product Development Plan
+# ScoutMonitor AI — Product Development Roadmap
 
-## Product goal
+## Product outcome
 
-Make ScoutMonitor AI a reliable, secure football monitoring service usable by different users or organizations. The current Streamlit and PostgreSQL application is a locally demonstrated prototype. This plan defines work still needed before any commercial launch; it does not claim those features are already available.
+Deliver a secure, reliable, **customer-usable football scouting and performance monitoring service**. A scout should be able to sign in, join an organization, search players, compare verified statistics, maintain a private watchlist, generate an evidence-backed AI report, review it, and revisit the organization's report history **without installing development tools**.
 
-## Engineering principles
+This roadmap describes both the implemented baseline and unfinished work. A green test run is necessary but not proof of commercial readiness.
 
-- Preserve verified evidence: missing statistics must remain unknown, not zero.
-- Treat AI-generated analysis as a draft until validated and approved.
-- Keep private keys and licensed provider data out of source control.
-- Prefer automated tests and small reviewed changes over cosmetic commits.
-- Keep source-data attribution and access rights explicit.
+## Working agreement: guided product development
 
-## Phase 1 — Reliability and reproducibility
+ScoutMonitor AI will be built **with the developer actively operating the technologies**, not by presenting batches of finished modules as substitutes for learning.
 
-1. Run Python syntax checks and the synthetic-data unit tests on every pull request.
-2. Expand tests to monitoring change detection, report validation, duplicate prevention, and approval decisions.
-3. Add integration tests that run against an isolated PostgreSQL test database.
-4. Replace manual schema setup with versioned database migrations (Alembic).
-5. Build a Docker-based local development environment and document a clean setup.
+For each feature, the mentor and developer will:
 
-**Completion criteria:** clean checkout, documented setup, reliable automated tests, and repeatable database migrations.
+1. Inspect the current behavior and select one concrete customer-facing outcome.
+2. Explain the chosen tool, what it solves, and which existing components it connects.
+3. Implement through the real local development environment with exact file paths and actionable instructions.
+4. Run the application and validate the workflow visually and through automated tests.
+5. Resolve defects, verify security and data handling, and document the result.
+6. Move on only when acceptance criteria are met; avoid repeating completed steps.
 
-## Phase 2 — Application backend and identity
+Do not add classroom exercises or unnecessary frameworks. Avoid broad unverified rewrites, artificial commits, and naming such as "initial", "portfolio version", "starter", "draft release", or "polish" in visible project materials. Genuine technical names, release versions, and factual descriptions of draft AI reports remain appropriate.
 
-1. Introduce FastAPI for versioned, documented application endpoints.
-2. Implement user authentication with a managed identity provider or vetted library.
-3. Design organization and user roles, including reviewer/admin permissions.
-4. Ensure every database query enforces organization ownership; add cross-organization isolation tests.
-5. Add rate limits, secure session management, audit logs, and structured error handling.
+## Verified baseline
 
-**Completion criteria:** authorized users can safely access only their permitted data and actions.
+The repository currently includes:
 
-## Phase 3 — Data collection and AI quality
+- A local Streamlit dashboard and LangGraph/Gemini structured scouting workflow with human review.
+- PostgreSQL persistence, missing-statistics handling, and duplicate-record controls.
+- A FastAPI service with read-only synthetic player browsing and comparisons.
+- PostgreSQL migrations 0001–0003 on newly created, empty Alembic-managed databases.
+- OIDC token verification, organization memberships, protected watchlists, and organization-private **human-authored** scouting notes.
+- Automated Python and isolated PostgreSQL checks (38 API/data/security tests plus 24 DB tests in the latest verified suite).
 
-1. Establish and document licensed, permissioned football data sources.
-2. Build resilient scheduled ingestion with retry/backoff, idempotency, and provenance.
-3. Track player snapshots and distinguish missing, stale, and verified statistics.
-4. Evaluate factual correctness, narrative relevance, and AI cost with repeatable test datasets.
-5. Track model/provider failures and provide safe fallback behavior.
-6. Build player-to-player comparisons that explicitly show comparable metrics and data gaps.
+**Not yet verified:** an end-to-end hosted customer journey, actual customer identity-provider setup, complete organization isolation of legacy AI reports and source data, commercial football-data rights, operational recovery, or payment functionality.
 
-**Completion criteria:** repeatable ingestion and measurable evidence quality before reports reach reviewers.
+**Important protection:** existing local PostgreSQL databases created outside Alembic must not be stamped, migrated, or overwritten without a separate backup and reviewed adoption procedure.
 
-## Phase 4 — Usable hosted application
+## Delivery sequence and acceptance criteria
 
-1. Move to a multi-user web UI with onboarding, player search, watchlists, comparison screens, and approval queues.
-2. Deploy application and managed PostgreSQL in an appropriate cloud environment.
-3. Add backups, restore drills, monitoring, alerts, encrypted secrets, and operational logs.
-4. Add privacy documentation, retention/deletion workflows, support process, and published limitations.
+### 1. Reproducible development and honest verification
 
-**Completion criteria:** invited users can operate the system end-to-end without local installation.
+- **Tools:** Docker Compose, FastAPI, PostgreSQL 18, Alembic, pytest, Playwright later.
+- Establish a documented, clean local environment without modifying existing reports.
+- Add a database readiness check separate from process liveness.
+- Use integration tests that exercise the API, database, and failures; report real test coverage rather than just test counts.
+- Validate the Streamlit report-generation, approval, and historical monitoring journey using isolated synthetic data.
+- Add structured logging and a consistent configuration layer with safe secret handling.
 
-## Phase 5 — Commercial release
+**Done when:** a developer can check out the project, start its services, create synthetic data, execute one complete report workflow, and rerun automated checks without secret-sharing or manual schema intervention.
 
-1. Confirm sports-data licensing permits the intended hosted and paying-user workflows.
-2. Complete a security review including authorization and tenancy separation.
-3. Run pilot users, measure reliability and usefulness, and fix observed failures.
-4. Establish billing, subscription entitlement checks, customer terms, privacy policy, and support procedures.
-5. Define service levels and operating costs before paid launch.
+### 2. Professional customer-facing interface
 
-**Completion criteria:** secure, legally usable, monitored service tested with real external users and a repeatable support process.
+- **Tools:** Next.js, TypeScript, Tailwind CSS, FastAPI.
+- Create an application shell with navigation, player profiles, comparison views, watchlists, scouting-note screens, and report review queue.
+- Use only synthetic data until customer authorization and licensed data are ready.
+- Connect each real page to a tested API; do not treat static mockups as functioning features.
+- Ensure responsive layout, accessibility, loading/error states, and understandable data-source labels.
 
-## Suggested technologies
+**Done when:** a user can browse and compare fictional players, use a protected organization workflow, and understand the origin and completeness of each metric through a working browser interface.
 
-| Component | Recommendation | Purpose |
-|---|---|---|
-| Web/API backend | FastAPI and Pydantic | Validated, documented service endpoints |
-| Database | PostgreSQL with SQLAlchemy and Alembic | Reliable persistence and schema migrations |
-| Web interface | Start with Streamlit; consider Next.js later | Faster early iteration, stronger multi-user product UI later |
-| Identity | Managed authentication provider | Sign-in, sessions, password and account security |
-| Agent workflow | Keep LangGraph and Google Gemini | Existing report orchestration and AI generation |
-| Background jobs | A scheduler plus a durable queue when needed | Resilient ingestion and report preparation |
-| Containers | Docker and Compose | Reproducible local and deployment environments |
-| Testing | unittest/pytest, integration tests and GitHub Actions | Continuous quality checks |
-| Monitoring | Structured logs and OpenTelemetry | Diagnostics, latency, failures and AI costs |
-| Cloud | Managed container service and managed PostgreSQL | Hosting without self-managing servers |
+### 3. Managed identity and complete organization isolation
 
-## GitHub contribution policy
+- **Tools:** managed OIDC identity service, PostgreSQL RLS where appropriate, Pydantic/FastAPI validation.
+- Configure an actual trusted identity provider with safe development accounts.
+- Add invitation and membership administration, explicit organization selection, session protections, and audit events.
+- Model organization ownership for **new** AI reports and associated private data; do not expose legacy global reports to customers.
+- Test forbidden access across organizations, direct object references, inactive memberships, privilege escalation, and database-role boundaries.
 
-Use descriptive commits for actual changes, for example:
+**Done when:** two independent test organizations can operate simultaneously without accessing or changing each other's notes, reports, or permissions. A security review confirms intended boundaries.
 
-- `ci: validate Python source and unit tests`
-- `test: cover missing football statistics`
-- `feat: implement organization-scoped player queries`
-- `fix: prevent duplicate report submission`
-- `docs: explain local database setup`
+### 4. Evidence-based scouting and AI reliability
 
-Create branches for cohesive features, run tests, review in pull requests, and merge into `main` when checks pass. The goal is a truthful, maintainable project history, **not** a large number of artificial commits.
+- **Tools:** LangGraph, Google Gemini (replaceable through a model adapter), structured validation, LangSmith/OpenTelemetry as justified.
+- Connect the verified reporting workflow to organization-owned records.
+- Distinguish genuine zeroes from missing, stale, or unknown statistics.
+- Track source, observation date, transformation logic, evidence references, and model usage/cost.
+- Evaluate factual correctness, unsupported narrative statements, report quality, provider outages, and human approval decisions on repeatable cases.
+- Add useful player comparisons, monitoring alerts, and history charts.
 
-## Scope boundaries
+**Done when:** reports are evidence-traceable, reject unsupported facts, remain private to the correct organization, and work reliably through review and retrieval.
 
-The current repository does **not** provide a multi-user SaaS product, production authentication, billing, guaranteed real-time licensed data, or a public hosted service. These are proposed future milestones.
+### 5. Data licensing and resilient collection
+
+- **Tools:** provider-specific HTTP clients, scheduled tasks or n8n as an explicit automation layer, and a durable job queue only when failure/retry requirements justify it.
+- Select licensed football-data sources with explicit commercial rights.
+- Test ingestion retries, pagination, rate limits, idempotency, data freshness, and provenance.
+- n8n may schedule work or deliver notifications; the main agent remains in LangGraph.
+- Keep scheduled publishing and customer notifications inactive until deliberately enabled; never bypass human approval.
+
+**Done when:** authorized source data arrives on schedule, can be traced and corrected, and does not silently fabricate unavailable metrics.
+
+### 6. Operations and secure cloud delivery
+
+- **Tools:** Docker, managed PostgreSQL, cloud container hosting, GitHub Actions, OpenTelemetry, error tracking.
+- Package API and interface; implement least-privilege credentials, migrations, backups, restore drills, health checks, rate limits, and safe error handling.
+- Measure latency, reliability, and infrastructure/LLM costs.
+- Test deployment, rollback, incident recovery, privacy processes, and retention/deletion.
+- Do not expose the legacy Streamlit dashboard directly as a multi-tenant public service.
+
+**Done when:** external pilot users can log in, complete core tasks safely, and the operator can monitor and recover the service.
+
+### 7. Commercial launch
+
+- **Tools:** subscription entitlements and Stripe only after billing requirements are defined.
+- Conduct usability pilots with real scouts; verify product value and pricing.
+- Complete commercial data licensing, contract terms, privacy notices, security review, support, and customer onboarding.
+- Add subscription billing, account lifecycle and support processes.
+- Set a clear release checklist with measured acceptance thresholds.
+
+**Done when:** an external customer can subscribe, use supported workflows, receive support, and trust the product's privacy, accuracy, and availability.
+
+## Current focus
+
+**Next working milestone:** run ScoutMonitor AI locally through a reproducible application/API/database development setup, prove a complete synthetic-data scouting/review journey, and identify the first customer-facing Next.js page to connect to real endpoints.
+
+Starting with this working vertical slice is more useful than introducing multiple frameworks without a product workflow. Keep the existing local reports untouched.
+
+## GitHub and naming quality
+
+- Maintain the public project identity as **ScoutMonitor AI** in repository descriptions, README, UI, and key docs.
+- Keep filenames descriptive and professional; technical modules may have different functional names.
+- Use reviewed branches, honest implementation details, and CI checks; do not inflate commit counts.
+- Never rewrite published Git history purely to change visible commit messages without a deliberate backup and local-clone synchronization plan.
+- Do not commit secrets, licensed data exports, or synthetic statistics described as real.
