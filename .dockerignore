@@ -1,0 +1,25 @@
+# Never include local credentials or developer databases in container builds.
+.git
+.github
+.env
+.env.*
+!.env.example
+.venv
+__pycache__
+.pytest_cache
+*.pyc
+*.pyo
+*.bak
+.coverage*
+htmlcov
+logs
+dist
+build
+node_modules
+.next
+out
+docs
+integration_tests
+tests
+scripts
+*.sql

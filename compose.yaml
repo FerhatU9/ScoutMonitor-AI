@@ -1,0 +1,58 @@
+# Local-only API and isolated demonstration database. Not a cloud deployment.
+name: scoutmonitor
+
+services:
+  api:
+    build:
+      context: .
+    environment:
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_NAME: scoutmonitor_demo
+      DB_USER: postgres
+      DB_PASSWORD: ${SCOUTMONITOR_DOCKER_DB_PASSWORD:?Set SCOUTMONITOR_DOCKER_DB_PASSWORD in your local .env file}
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  postgres:
+    image: postgres:18
+    environment:
+      POSTGRES_DB: scoutmonitor_demo
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${SCOUTMONITOR_DOCKER_DB_PASSWORD:?Set SCOUTMONITOR_DOCKER_DB_PASSWORD in your local .env file}
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d scoutmonitor_demo"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  # Explicit maintenance command; never runs on ordinary 'docker compose up'.
+  migrate:
+    profiles: ["maintenance"]
+    build:
+      context: .
+    command: ["python", "-m", "alembic", "-c", "alembic.ini", "upgrade", "head"]
+    environment:
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_NAME: scoutmonitor_demo
+      DB_USER: postgres
+      DB_PASSWORD: ${SCOUTMONITOR_DOCKER_DB_PASSWORD:?Set SCOUTMONITOR_DOCKER_DB_PASSWORD in your local .env file}
+      SCOUTMONITOR_MIGRATION_DATABASE: scoutmonitor_demo
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
