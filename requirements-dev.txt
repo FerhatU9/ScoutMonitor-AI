@@ -1,3 +1,7 @@
+# ScoutMonitor AI test and development dependencies
+# Install runtime requirements before running automated checks.
 -r requirements.txt
+# Test runner (the existing unit suite also supports unittest)
 pytest>=8,<10
+# In-process HTTP client for FastAPI API tests
 httpx>=0.27,<1
