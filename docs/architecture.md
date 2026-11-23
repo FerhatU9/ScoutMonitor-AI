@@ -1,152 +1,73 @@
-
 # ScoutMonitor AI — System Architecture
 
-## 1. Project Overview
+## Product boundaries
 
-ScoutMonitor AI is a football intelligence application built with Python, LangGraph, Google Gemini, PostgreSQL, and Streamlit.
+ScoutMonitor AI contains a locally demonstrated AI scouting workflow and a developing FastAPI backend. It is **not** a hosted multi-organization SaaS product. The Streamlit dashboard and legacy AI reports are not tenant-isolated and must not be made publicly accessible as customer features.
 
-The application monitors football player statistics, produces AI-assisted scouting reports, validates factual information, and requires human review before reports are finalized.
+## Components
 
-The current application runs locally and has been demonstrated using stored football statistics and synthetic test data.
+| Component | Responsibilities | Current scope |
+|---|---|---|
+| Python monitoring code | Read historical observations, detect changes, and prepare evidence summaries | Local workflow |
+| LangGraph + Gemini | Generate structured report text from stored evidence | Local AI workflow, human review required |
+| PostgreSQL | Persist player statistics, review records, and organization data | Legacy and new Alembic-managed schemas differ |
+| Streamlit | Display historical statistics, generated report previews, and approval controls | Single local reviewer workflow |
+| FastAPI | Synthetic player search/comparison, API health, membership-scoped watchlists and notes | Development backend |
+| OIDC token verification | Verify trusted access-token signatures, issuer, audience, and expiry | Requires a configured external provider |
+| Organization records and private notes | Organization memberships, roles, watchlists, and human-authored notes | New Alembic-managed databases; notes use restricted-role PostgreSQL RLS |
+| GitHub Actions | Syntax, selected API tests, database migration and isolation tests | Automated checks on isolated synthetic data |
 
-## 2. High-Level Architecture
+## Application data flows
+
+### Legacy local scouting workflow
 
 ```mermaid
 flowchart TD
-    A[Football Data Sources] --> B[Python Data Processing]
-    B --> C[(PostgreSQL Database)]
-    C --> D[Streamlit Dashboard]
-    D --> E[LangGraph Workflow]
-    E --> F[Gemini Report Generation]
-    F --> G[Automatic Factual Validation]
-    G --> H[Human Review Submission]
-    H --> I[(PostgreSQL Report Storage)]
-    I --> J[Approve or Reject]
-    J --> K[Report History]
+    A[Stored football observations] --> B[(PostgreSQL)]
+    B --> C[Streamlit dashboard]
+    C --> D[LangGraph monitoring workflow]
+    D --> E[Gemini structured report]
+    E --> F[Five factual-field checks]
+    F --> G[Human approval or rejection]
+    G --> H[(Legacy AI report history)]
 ```
 
-This diagram illustrates the overall system flow rather than every internal LangGraph branch.
+The workflow distinguishes `COMPLETE`, `PARTIAL`, `NOT_REPORTED`, and `NOT_COLLECTED` data states. A valid structured report can still contain unsupported narrative claims, so a human reviewer must inspect it. No report should be published automatically. The legacy table contains no organization ownership, and is **not** suitable for direct multi-tenant access.
 
-## 3. Technologies
+### Developing API foundation
 
-| Technology | Purpose |
-|---|---|
-| Python | Core application logic |
-| PostgreSQL | Store player statistics and reports |
-| LangGraph | Coordinate the AI workflow |
-| Google Gemini | Generate structured scouting reports |
-| Streamlit | Provide an interactive dashboard |
-| Pytest | Run automated tests |
-| Git and GitHub | Version control and project documentation |
+```mermaid
+flowchart LR
+    A[Caller] --> B[FastAPI]
+    B --> C[Verified synthetic player catalog]
+    B --> D[Trusted OIDC identity check]
+    D --> E[Active PostgreSQL membership]
+    E --> F[Organization watchlist]
+    E --> G[Private human-authored notes]
+    G --> H[Restricted-role PostgreSQL RLS]
+```
 
-## 4. Data Processing
+The synthetic API is read-only and is not an authorized commercial sports-data source. Private notes require a dedicated, non-superuser database connection. PostgreSQL RLS adds a safeguard but does not protect against direct SQL execution with compromised database credentials.
 
-The project supports stored football statistics and synthetic demonstration data.
+## Database schema evolution
 
-Player information and statistical observations are stored in PostgreSQL.
+- `docs/schema.sql` is a legacy PostgreSQL 18 schema export.
+- Alembic revision `0001` creates the core tables in a **new empty** database.
+- Revision `0002` adds organizations, external identities, memberships, and watchlists.
+- Revision `0003` adds human-authored private notes, restrictions, and row-security policies.
 
-The application distinguishes between four data states:
+Never stamp, migrate, or overwrite a legacy local database without an independently reviewed backup and data-adoption procedure. The safe demonstration database is `scoutmonitor_demo`.
 
-- COMPLETE: Required statistics are available.
-- PARTIAL: Some statistics are missing.
-- NOT_REPORTED: Statistics have not been reported.
-- NOT_COLLECTED: No observation has been stored.
+## Data provenance
 
-Missing values are not automatically interpreted as zero.
+A database name is not proof of where its records came from. The monitoring workflow labels `scoutmonitor_demo` as fictional demonstration data; other databases use a neutral label until per-observation provenance is implemented. Missing football statistics must remain unknown, not become zero. Provider licenses and commercial redistribution rights must be verified before real customer use.
 
-## 5. LangGraph Workflow
+## Quality assurance and limits
 
-The Streamlit dashboard imports the compiled graph from:
+The latest previously verified suite covered 38 API/data/security tests and 24 isolated PostgreSQL integration tests. Additional provenance tests are introduced in the current maintenance work. The GitHub workflow previously installed only test-specific dependencies; a full runtime dependency smoke check is being added.
 
-`scripts/scout_structured_graph.py`
+Passing these checks does **not** establish that the entire LangGraph/Gemini/Streamlit customer journey works for external users. Required further verification includes real identity-provider integration, report ownership, authorization across all data paths, full workflow testing, backups and recovery, cloud operations, performance, and licensing.
 
-The workflow contains nodes for:
+## Next development direction
 
-- Fetching player data
-- Checking performance changes
-- Preparing summaries
-- Creating alert drafts
-- Generating structured AI reports
-- Validating generated reports
-
-The workflow routes detected changes to alert preparation and other monitoring states to factual summaries. Both paths proceed to structured report generation and factual validation.
-
-## 6. AI Report Generation
-
-The application uses Google Gemini to generate structured reports from available player evidence.
-
-Reports may contain:
-
-- Player ID
-- Snapshot date
-- Goals
-- Assists
-- Monitoring status
-- Written analysis
-
-When historical information is unavailable, the application can return WAITING_FOR_HISTORY instead of inventing a performance comparison.
-
-## 7. Automatic Validation
-
-Generated reports undergo factual checks against stored evidence.
-
-The dashboard displays whether validation has passed.
-
-A factual validation PASS does not mean the narrative has received human approval.
-
-## 8. Human Review
-
-Reports are submitted for human review rather than automatically published.
-
-The review workflow supports:
-
-- Pending reports
-- Human approval or rejection
-- Reviewer identification
-- Review timestamps
-- Report history
-- Duplicate-report prevention
-
-Review information is stored in PostgreSQL.
-
-## 9. Local Verification
-
-The following functionality has been demonstrated locally:
-
-- Player statistics displayed in Streamlit
-- Structured AI report generation
-- Factual validation
-- Human approval
-- Report persistence in PostgreSQL
-- Retrieval of approved reports
-- Duplicate-report prevention
-
-Six automated tests have also passed.
-
-These checks demonstrate working local functionality, not full production readiness.
-
-## 10. Current Limitations
-
-- The application currently requires local configuration.
-- Historical player statistics may be incomplete.
-- Broader automated testing is needed.
-- Deployment and security require further verification.
-- External data usage must respect applicable licensing terms.
-- Production authentication and operational controls are not yet verified.
-
-## 11. Future Improvements
-
-- Reproducible deployment using Docker
-- Additional automated integration tests
-- Broader football data coverage
-- More advanced player comparison
-- Automated monitoring schedules
-- Enhanced scouting visualizations
-- Security and performance testing
-- A publicly accessible demonstration
-
-## 12. Project Status
-
-ScoutMonitor AI currently demonstrates a working local AI-assisted football monitoring and human-review workflow.
-
-The repository documents a locally demonstrated engineering prototype, not a commercially deployed service.
+Follow [Product Development Roadmap](product-development.md) for acceptance-based milestones and the guided local implementation process. Prioritize an isolated reproducible development setup, one working end-to-end synthetic scouting/review journey, and a customer-facing Next.js interface connected to real API functionality before commercial deployment.
