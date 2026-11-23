@@ -28,3 +28,10 @@ def detect_change(previous, current):
         return "CHANGE_DETECTED"
 
     return "NO_CHANGE"
+
+
+def observation_source_description(database_name):
+    """Never claim a stored observation came from an unverified provider."""
+    if database_name == "scoutmonitor_demo":
+        return "Fictional demonstration data"
+    return "Stored football observations (provider not independently verified)"
