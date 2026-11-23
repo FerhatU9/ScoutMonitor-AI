@@ -6,7 +6,7 @@
 
 ScoutMonitor AI combines football statistics, historical monitoring, AI-generated scouting reports, factual validation, and human approval in a Python application. It demonstrates a review-first workflow: **the system prepares the analysis; a person decides whether to approve it.**
 
-**Project status:** Working local application and read-only API foundation. Multi-user access, managed deployment, and paid customer features are planned—not currently available.
+**Project status:** Local AI scouting dashboard plus a developing FastAPI backend. Organization memberships, restricted watchlists and private scouting notes are implemented, but customer sign-in, tenant-isolated AI reports, hosted deployment, and paid features are not available.
 
 ## What it does
 
@@ -19,7 +19,7 @@ ScoutMonitor AI combines football statistics, historical monitoring, AI-generate
 | Human decisions | Approve or reject pending reports and inspect reviewed-report history |
 | Database persistence | Store player observations, alerts, and report/review records in PostgreSQL |
 | Streamlit dashboard | View monitoring information, generate report drafts, and review results locally |
-| FastAPI service | Health checks, synthetic player browsing and filtering, single-player details, and two-player comparisons |
+| FastAPI service | Synthetic player browsing and comparisons; protected organization watchlists and human-authored scouting notes |
 | Continuous testing | Run **38 API/data/security tests** and **24 PostgreSQL integration tests** through GitHub Actions |
 
 The automated tests cover synthetic-data validation and the read-only API. Other features have been demonstrated locally but do not yet have complete integration-test coverage.
@@ -51,7 +51,8 @@ For the component-level design, see [System Architecture](docs/architecture.md).
 | Language model | Google Gemini |
 | Web interface | Streamlit |
 | Read-only HTTP API | FastAPI, Uvicorn |
-| Database | PostgreSQL, psycopg |
+| Database | PostgreSQL, psycopg, SQLAlchemy, Alembic |
+| Identity verification | OpenID Connect, PyJWT |
 | Quality checks | unittest, pytest, GitHub Actions |
 
 ## Repository guide
@@ -121,15 +122,16 @@ Copy-Item .env.example .env
 
 Set your PostgreSQL password and Gemini credentials in `.env`. Do not commit that file. The example configuration uses the isolated database `scoutmonitor_demo`.
 
-Create this separate demonstration database and load the schema and fictional seed data. From the repository root, with PostgreSQL 18 installed at the default Windows path:
+Create an **empty, isolated** demonstration database, apply the versioned migrations, then load the fictional records. From the repository root, with PostgreSQL 18 installed at the default Windows path:
 
 ~~~powershell
 & "C:\Program Files\PostgreSQL\18\bin\createdb.exe" -h localhost -p 5432 -U postgres scoutmonitor_demo
-& "C:\Program Files\PostgreSQL\18\bin\psql.exe" -h localhost -p 5432 -U postgres -d scoutmonitor_demo -v ON_ERROR_STOP=1 -f docs/schema.sql
+$env:SCOUTMONITOR_MIGRATION_DATABASE = "scoutmonitor_demo"
+.\.venv\Scripts\python.exe -m alembic -c alembic.ini upgrade head
 & "C:\Program Files\PostgreSQL\18\bin\psql.exe" -h localhost -p 5432 -U postgres -d scoutmonitor_demo -v ON_ERROR_STOP=1 -f docs/demo_seed.sql
 ~~~
 
-**Safety:** The seed script refuses to execute against a database with any other name. Never load demonstration data into a database containing important existing records.
+**Safety:** Use an entirely new, empty database. Alembic refuses to adopt a database with manually created tables, and the fictional seed only permits `scoutmonitor_demo`. **Never stamp or migrate your existing local report database without a separately reviewed backup and adoption plan.** `docs/schema.sql` is a legacy reference export; do not run it alongside Alembic.
 
 ### 4. Start the Streamlit dashboard
 
@@ -146,7 +148,7 @@ Open **http://localhost:8502**. The dashboard requires its configured PostgreSQL
 .\.venv\Scripts\python.exe -m unittest discover -s tests -v
 ~~~
 
-The suite includes **38 API, data-validation, and authentication tests** plus **24 PostgreSQL integration tests** that run against a disposable CI database. GitHub Actions checks Python syntax, runs the API/data suite on Python 3.11 and 3.12, and verifies database migrations, report storage and review constraints on PostgreSQL 18. Authentication and external-provider integration are not yet covered.
+The suite includes **38 API, data-validation, and authentication tests** plus **24 PostgreSQL integration tests** that run against a disposable CI database. GitHub Actions checks Python syntax, runs the API/data suite on Python 3.11 and 3.12, and verifies PostgreSQL migrations, selected report-storage workflows, roles and note isolation. Real identity-provider integration, the full Streamlit-to-AI workflow, and external football-data ingestion still need independent verification.
 
 ## Database migrations
 
@@ -177,6 +179,6 @@ This repository includes **fictional football data**, not downloaded Sportmonks 
 
 ScoutMonitor AI is being developed toward a secure service that other users and organizations can access. Planned work includes database migrations, broader integration testing, authentication and role-based permissions, organization-level data separation, robust data ingestion, cloud deployment, monitoring, and commercial licensing review.
 
-See [Product Development Plan](docs/product-development.md) for milestones and scope.
+See [Product Development Plan](docs/product-development.md) for milestones, technology choices, acceptance criteria, and the guided build process.
 
-**Current boundary:** No customer authentication, tenant isolation, billing, hosted public dashboard, or production-service guarantee is claimed. The source is public, but the application is not yet a commercial SaaS product.
+**Current boundary:** The backend has token verification and limited organization-scoped resources, but no configured customer login or tenant separation for legacy AI reports and the Streamlit dashboard. There is no billing, publicly hosted service, or production guarantee. The source is public, but the application is not yet a commercial SaaS product.
