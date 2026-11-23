@@ -20,3 +20,18 @@ data/*.json
 installed-packages.txt
 scripts/*backup*.py
 *.bak
+
+# Coverage and build outputs
+.coverage
+.coverage.*
+htmlcov/
+dist/
+build/
+*.egg-info/
+.mypy_cache/
+.ruff_cache/
+
+# Frontend dependencies and generated output
+node_modules/
+.next/
+out/
