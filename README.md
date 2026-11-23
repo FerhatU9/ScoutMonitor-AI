@@ -42,6 +42,8 @@ The Streamlit dashboard runs the existing reporting and review workflow. The Fas
 
 For the component-level design, see [System Architecture](docs/architecture.md).
 
+For branching, testing, review and documentation standards, see [Contributing](CONTRIBUTING.md).
+
 ## Technology
 
 | Layer | Technology |

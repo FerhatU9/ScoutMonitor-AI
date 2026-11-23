@@ -64,7 +64,7 @@ A database name is not proof of where its records came from. The monitoring work
 
 ## Quality assurance and limits
 
-The latest previously verified suite covered 38 API/data/security tests and 24 isolated PostgreSQL integration tests. Additional provenance tests are introduced in the current maintenance work. The GitHub workflow previously installed only test-specific dependencies; a full runtime dependency smoke check is being added.
+The latest verified GitHub Actions run passed **41 API/data/security tests** and **24 isolated PostgreSQL integration tests**. The separate runtime job also installed the complete Python requirements and verified application imports. These tests use synthetic or isolated test data; they do not verify the complete externally hosted customer workflow.
 
 Passing these checks does **not** establish that the entire LangGraph/Gemini/Streamlit customer journey works for external users. Required further verification includes real identity-provider integration, report ownership, authorization across all data paths, full workflow testing, backups and recovery, cloud operations, performance, and licensing.
 
