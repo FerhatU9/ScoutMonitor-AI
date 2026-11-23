@@ -1,0 +1,72 @@
+name: Container build
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - Dockerfile
+      - .dockerignore
+      - requirements-api.txt
+      - compose.yaml
+      - api/**
+      - scoutmonitor/**
+      - data/fictional_players.csv
+      - db/migrations/**
+      - alembic.ini
+      - .github/workflows/container-build.yml
+  pull_request:
+    branches: [main]
+    paths:
+      - Dockerfile
+      - .dockerignore
+      - requirements-api.txt
+      - compose.yaml
+      - api/**
+      - scoutmonitor/**
+      - data/fictional_players.csv
+      - db/migrations/**
+      - alembic.ini
+      - .github/workflows/container-build.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  api:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Build API image
+        run: docker build --tag scoutmonitor-api:ci .
+      - name: Start API container
+        run: docker run --detach --name scoutmonitor-api-ci --publish 127.0.0.1:18000:8000 scoutmonitor-api:ci
+      - name: Check API health and fictional data
+        run: |
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:18000/health > /dev/null; then
+              break
+            fi
+            sleep 2
+          done
+          python - <<'PY'
+          import json
+          from urllib.request import urlopen
+          with urlopen("http://127.0.0.1:18000/health", timeout=5) as response:
+              health = json.load(response)
+          with urlopen("http://127.0.0.1:18000/api/v1/demo/validation", timeout=5) as response:
+              data = json.load(response)
+          assert health == {"status": "ok", "service": "scoutmonitor-api"}, health
+          assert data == {
+              "players": 20,
+              "rows_with_missing_metrics": 2,
+              "data_source": "synthetic_v1",
+          }, data
+          PY
+      - name: Show container logs on failure
+        if: failure()
+        run: docker logs scoutmonitor-api-ci || true
+      - name: Stop API container
+        if: always()
+        run: docker rm -f scoutmonitor-api-ci || true
