@@ -7,8 +7,7 @@ import psycopg
 from dotenv import load_dotenv
 from langgraph.graph import StateGraph, START, END
 
-from monitor_logic import detect_change
-from scoutmonitor.provenance import observation_source_description
+from monitor_logic import detect_change, observation_source_description
 
 # Load database settings
 project_folder = Path(__file__).resolve().parent.parent
